@@ -80,7 +80,7 @@ static void HandleQuery(onebase::OneBaseInstance &instance,
 static void HandleClient(onebase::OneBaseInstance &instance,
                          int client_fd, const std::string &client_addr) {
   using namespace onebase;
-  LOG_INFO("Client connected: {}", client_addr);
+  LOG_INFO(std::string("Client connected: ") + client_addr);
 
   while (g_running.load()) {
     MessageType type{};
@@ -102,7 +102,7 @@ static void HandleClient(onebase::OneBaseInstance &instance,
   }
 
 done:
-  LOG_INFO("Client disconnected: {}", client_addr);
+  LOG_INFO(std::string("Client disconnected: ") + client_addr);
   ::close(client_fd);
 }
 
