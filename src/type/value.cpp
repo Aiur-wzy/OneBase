@@ -5,7 +5,8 @@
 #include "onebase/common/macros.h"
 
 #include <cstring>
-#include <fmt/format.h>
+#include <iomanip>
+#include <sstream>
 
 namespace onebase {
 
@@ -279,8 +280,11 @@ auto Value::ToString() const -> std::string {
             return boolean_ ? "true" : "false";
         case TypeId::INTEGER:
             return std::to_string(integer_);
-        case TypeId::FLOAT:
-            return fmt::format("{:.2f}", float_);
+        case TypeId::FLOAT: {
+            std::ostringstream os;
+            os << std::fixed << std::setprecision(2) << float_;
+            return os.str();
+        }
         case TypeId::VARCHAR:
             return varchar_;
         default:

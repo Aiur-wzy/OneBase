@@ -2,10 +2,19 @@
 
 include(GoogleTest)
 
+if(NOT GTest_FOUND)
+  add_executable(onebase_smoke_test smoke/smoke_test_main.cpp)
+  target_link_libraries(onebase_smoke_test PRIVATE onebase)
+  target_compile_features(onebase_smoke_test PRIVATE cxx_std_17)
+  add_test(NAME onebase_smoke_test COMMAND onebase_smoke_test)
+  return()
+endif()
+
 # Convenience macro for adding tests
 macro(onebase_add_test TEST_NAME TEST_SOURCE)
   add_executable(${TEST_NAME} ${TEST_SOURCE})
   target_link_libraries(${TEST_NAME} PRIVATE onebase GTest::gtest_main)
+  target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
   gtest_discover_tests(${TEST_NAME})
 endmacro()
 
@@ -37,6 +46,7 @@ macro(onebase_eval_test TEST_NAME TEST_SOURCE)
   add_executable(${TEST_NAME} ${TEST_SOURCE} eval/eval_main.cpp)
   target_link_libraries(${TEST_NAME} PRIVATE onebase GTest::gtest)
   target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
   gtest_discover_tests(${TEST_NAME})
 endmacro()
 
