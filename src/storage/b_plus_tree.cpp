@@ -98,7 +98,7 @@ auto BPLUSTREE_TYPE::Insert(const KeyType &key, const ValueType &value) -> bool 
   // ------------------------------------------------------------------
   // No overflow.
   // ------------------------------------------------------------------
-  if (new_size < leaf->GetMaxSize()) {
+  if (new_size <= leaf->GetMaxSize()) {
     bpm_->UnpinPage(leaf_page->GetPageId(), true);
     return true;
   }
@@ -162,7 +162,7 @@ auto BPLUSTREE_TYPE::Insert(const KeyType &key, const ValueType &value) -> bool 
     bpm_->UnpinPage(new_page->GetPageId(), true);
 
     // Check if the parent overflows.
-    if (parent->GetSize() < parent->GetMaxSize()) {
+    if (parent->GetSize() <= parent->GetMaxSize()) {
       bpm_->UnpinPage(parent_id, true);
       return;
     }
@@ -311,7 +311,7 @@ void BPLUSTREE_TYPE::Remove(const KeyType &key) {
       auto *node_leaf = reinterpret_cast<LeafPage *>(tree_page);
       auto *sibling_leaf = reinterpret_cast<LeafPage *>(sibling_tree);
 
-      if (sibling_leaf->GetSize() + node_leaf->GetSize() < node_leaf->GetMaxSize()) {
+      if (sibling_leaf->GetSize() + node_leaf->GetSize() <= node_leaf->GetMaxSize()) {
         // Merge: always merge the right node into the left node.
         LeafPage *left;
         LeafPage *right;
@@ -500,7 +500,7 @@ auto BPLUSTREE_TYPE::GetValue(const KeyType &key, std::vector<ValueType> *result
 template <typename KeyType, typename ValueType, typename KeyComparator>
 auto BPLUSTREE_TYPE::Begin() -> Iterator {
   if (IsEmpty()) {
-    return Iterator(INVALID_PAGE_ID, 0);
+    return Iterator(INVALID_PAGE_ID, 0, bpm_);
   }
 
   // Traverse to the leftmost leaf: always follow index-0 child.
@@ -516,7 +516,7 @@ auto BPLUSTREE_TYPE::Begin() -> Iterator {
 
   page_id_t leaf_id = page->GetPageId();
   bpm_->UnpinPage(leaf_id, false);
-  return Iterator(leaf_id, 0);
+  return Iterator(leaf_id, 0, bpm_);
 }
 
 // ---------------------------------------------------------------------------
@@ -526,7 +526,7 @@ auto BPLUSTREE_TYPE::Begin() -> Iterator {
 template <typename KeyType, typename ValueType, typename KeyComparator>
 auto BPLUSTREE_TYPE::Begin(const KeyType &key) -> Iterator {
   if (IsEmpty()) {
-    return Iterator(INVALID_PAGE_ID, 0);
+    return Iterator(INVALID_PAGE_ID, 0, bpm_);
   }
 
   // FindLeafPage.
@@ -543,8 +543,16 @@ auto BPLUSTREE_TYPE::Begin(const KeyType &key) -> Iterator {
   auto *leaf = reinterpret_cast<LeafPage *>(tree_page);
   int index = leaf->KeyIndex(key, comparator_);
   page_id_t leaf_id = page->GetPageId();
+  page_id_t next_id = leaf->GetNextPageId();
+  int leaf_size = leaf->GetSize();
   bpm_->UnpinPage(leaf_id, false);
-  return Iterator(leaf_id, index);
+  if (index >= leaf_size) {
+    if (next_id == INVALID_PAGE_ID) {
+      return End();
+    }
+    return Iterator(next_id, 0, bpm_);
+  }
+  return Iterator(leaf_id, index, bpm_);
 }
 
 // ---------------------------------------------------------------------------
@@ -553,7 +561,7 @@ auto BPLUSTREE_TYPE::Begin(const KeyType &key) -> Iterator {
 
 template <typename KeyType, typename ValueType, typename KeyComparator>
 auto BPLUSTREE_TYPE::End() -> Iterator {
-  return Iterator(INVALID_PAGE_ID, 0);
+  return Iterator(INVALID_PAGE_ID, 0, bpm_);
 }
 
 }  // namespace onebase
