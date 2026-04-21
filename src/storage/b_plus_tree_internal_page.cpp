@@ -15,7 +15,6 @@ void B_PLUS_TREE_INTERNAL_PAGE_TYPE::Init(int max_size) {
   SetPageType(IndexPageType::INTERNAL_PAGE);
   SetMaxSize(max_size);
   SetSize(0);
-  SetParentPageId(INVALID_PAGE_ID);
 }
 
 template <typename KeyType, typename ValueType, typename KeyComparator>
