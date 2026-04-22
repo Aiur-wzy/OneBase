@@ -47,7 +47,7 @@ macro(onebase_eval_test TEST_NAME TEST_SOURCE)
   target_link_libraries(${TEST_NAME} PRIVATE onebase onebase_storage GTest::gtest)
   target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
   target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
-  gtest_discover_tests(${TEST_NAME})
+  gtest_discover_tests(${TEST_NAME} TEST_PREFIX "${TEST_NAME}.")
 endmacro()
 
 onebase_eval_test(lab1_eval_test eval/lab1_eval_test.cpp)

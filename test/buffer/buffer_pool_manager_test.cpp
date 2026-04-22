@@ -12,7 +12,7 @@ TEST(BufferPoolManagerTest, NewPageThrows) {
   BufferPoolManager bpm(10, &disk_manager);
 
   page_id_t page_id;
-  EXPECT_THROW(bpm.NewPage(&page_id), NotImplementedException);
+  EXPECT_NO_THROW(bpm.NewPage(&page_id));
 
   disk_manager.ShutDown();
   std::remove(db_name.c_str());
@@ -23,7 +23,7 @@ TEST(BufferPoolManagerTest, FetchPageThrows) {
   DiskManager disk_manager(db_name);
   BufferPoolManager bpm(10, &disk_manager);
 
-  EXPECT_THROW(bpm.FetchPage(0), NotImplementedException);
+  EXPECT_NO_THROW(bpm.FetchPage(0));
 
   disk_manager.ShutDown();
   std::remove(db_name.c_str());

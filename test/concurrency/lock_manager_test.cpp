@@ -10,7 +10,7 @@ TEST(LockManagerTest, SharedLockThrows) {
   Transaction txn(0);
   RID rid(0, 0);
 
-  EXPECT_THROW(lock_mgr.LockShared(&txn, rid), NotImplementedException);
+  EXPECT_NO_THROW(lock_mgr.LockShared(&txn, rid));
 }
 
 TEST(LockManagerTest, ExclusiveLockThrows) {
@@ -18,7 +18,7 @@ TEST(LockManagerTest, ExclusiveLockThrows) {
   Transaction txn(0);
   RID rid(0, 0);
 
-  EXPECT_THROW(lock_mgr.LockExclusive(&txn, rid), NotImplementedException);
+  EXPECT_NO_THROW(lock_mgr.LockExclusive(&txn, rid));
 }
 
 // Students: After implementing LockManager, add tests for:

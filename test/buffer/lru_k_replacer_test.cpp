@@ -5,16 +5,15 @@
 namespace onebase {
 
 TEST(LRUKReplacerTest, BasicEviction) {
-  // This test will throw NotImplementedException until student implements it
+  // Basic smoke test after implementation: API calls should not throw.
   LRUKReplacer replacer(7, 2);
 
-  // Test that methods throw NotImplementedException
   frame_id_t frame;
-  EXPECT_THROW(replacer.Evict(&frame), NotImplementedException);
-  EXPECT_THROW(replacer.RecordAccess(1), NotImplementedException);
-  EXPECT_THROW(replacer.SetEvictable(1, true), NotImplementedException);
-  EXPECT_THROW(replacer.Remove(1), NotImplementedException);
-  EXPECT_THROW(replacer.Size(), NotImplementedException);
+  EXPECT_NO_THROW(replacer.Evict(&frame));
+  EXPECT_NO_THROW(replacer.RecordAccess(1));
+  EXPECT_NO_THROW(replacer.SetEvictable(1, true));
+  EXPECT_NO_THROW(replacer.Remove(1));
+  EXPECT_NO_THROW(replacer.Size());
 }
 
 // Students: After implementing LRU-K, add more comprehensive tests here:
